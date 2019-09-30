@@ -34,6 +34,23 @@ public class User {
     private String username;
     @Column(name = "password")
     private String password;
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
     public User() {
     }
 //    public User(int id, String username, String password) {
