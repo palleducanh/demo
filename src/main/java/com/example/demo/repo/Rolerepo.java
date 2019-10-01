@@ -14,6 +14,6 @@ import java.util.List;
 @Repository
 public interface Rolerepo extends JpaRepository<Role, Long> {
 
-    @Query(value = "select c.role_name from user a join user_role b on a.user_id=b.user_id join role c on b.role_id=c.role_id where a.email =:email", nativeQuery = true)
+    @Query(value = "select c.role_name from public.user a join user_role b on a.user_id=b.user_id join role c on b.role_id=c.role_id where a.email =:email", nativeQuery = true)
     String getrole(@Param("email") String email);
 }

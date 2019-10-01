@@ -1,9 +1,15 @@
 package com.example.demo.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import com.example.demo.model.User;
+import com.example.demo.model.Userfull;
+import com.example.demo.model.Userrole;
+import com.example.demo.repo.Rolerepo;
+import com.example.demo.repo.Userrolerepo;
+import com.example.demo.service.EmailService;
 import com.example.demo.service.JwtService;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +18,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(maxAge = 3600)
 @RequestMapping("/rest")
 public class UserRestController {
     @Autowired
     private JwtService jwtService;
     @Autowired
     private UserService userService;
+    @Autowired
+    EmailService emailService;
+    @Autowired
+    Rolerepo rolerepo;
+    @Autowired
+    Userrolerepo userrolerepo;
     /* ---------------- GET ALL USER ------------------------ */
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public ResponseEntity<List<User>> getAllUser() {
@@ -42,11 +55,31 @@ public class UserRestController {
             return new ResponseEntity<String>("User Existed!", HttpStatus.BAD_REQUEST);
         }
     }
+    @RequestMapping(value = "/createRole", method = RequestMethod.POST)
+    public ResponseEntity<String> createRole(@RequestBody User user,@RequestParam("role") int role) {
+        userrolerepo.save(Userrole.builder().userid(user.getId()).roleid(role).count(0).build());
+        return new ResponseEntity<String>("createRole", HttpStatus.OK);
+    }
     /* ---------------- DELETE USER ------------------------ */
     @RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteUserById(@PathVariable int id) {
         userService.delete(id);
         return new ResponseEntity<String>("Deleted!", HttpStatus.OK);
+    }
+    @RequestMapping(value = "/usersfull/{id}", method = RequestMethod.POST)
+    public ResponseEntity<List<Userfull>> findalluserandrole() {
+        List<Userfull> users=new ArrayList<>();
+        for(User user:userService.findAll()){
+            users.add(Userfull.builder().user(user).Role(rolerepo.getrole(user.getUsername())).build());
+        };
+
+        return new ResponseEntity<List<Userfull>>(users, HttpStatus.OK);
+    }
+    @RequestMapping(value = "/email", method = RequestMethod.POST)
+    public ResponseEntity<String> sendmail(@RequestBody List<User> user) {
+      emailService.sendEmailToAll((List<User>) user,"");
+
+        return new ResponseEntity<String>("success", HttpStatus.OK);
     }
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<String> login(HttpServletRequest request, @RequestBody User user) {
