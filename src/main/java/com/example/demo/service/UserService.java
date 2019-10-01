@@ -43,11 +43,11 @@ public class UserService {
     }
 
     public boolean add(User user,int role) {
-//        for (User userExist : listUser) {
-//            if (user.getId() == userExist.getId() || StringUtils.equals(user.getUsername(), userExist.getUsername())) {
-//                return false;
-//            }
-//        }
+        for (User userExist : listUser) {
+            if (user.getId() == userExist.getId() || StringUtils.equals(user.getUsername(), userExist.getUsername())) {
+                return false;
+            }
+        }
 
         userrolerepo.save(Userrole.builder().userid(user.getId()).roleid(role).count(0).build());
         userrepo.save(user);
