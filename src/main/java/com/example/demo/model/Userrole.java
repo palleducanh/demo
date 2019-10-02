@@ -12,7 +12,6 @@ import javax.persistence.*;
 @Table(name = "user_role", schema = "public")
 public class Userrole {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_role_id")
     private int userroleid;
     @Column(name = "user_id")
@@ -21,4 +20,6 @@ public class Userrole {
     private int roleid;
     @Column(name = "count")
     private int count;
+    @Column(name = "status")
+    private int status;
 }

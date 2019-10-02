@@ -21,4 +21,6 @@ import java.util.List;
 public interface Userrepo extends JpaRepository<User, Long>{
     @Override
     List<User> findAll();
+    @Query(value = "select nextval('user_sequence')", nativeQuery = true)
+    int getid();
 }

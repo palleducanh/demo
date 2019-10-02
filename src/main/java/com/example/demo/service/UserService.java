@@ -26,14 +26,13 @@ public class UserService {
     public static List<User> listUser = new ArrayList<User>();
 
 
-
     public List<User> findAll() {
-        listUser=userrepo.findAll();
+        listUser = userrepo.findAll();
         return listUser;
     }
 
     public User findById(int id) {
-        listUser=userrepo.findAll();
+        listUser = userrepo.findAll();
         for (User user : listUser) {
             if (user.getId() == id) {
                 return user;
@@ -42,25 +41,27 @@ public class UserService {
         return null;
     }
 
-    public boolean add(User user,int role) {
+    public boolean add(User user, int role) {
+        user.setId(userrepo.getid());
         for (User userExist : listUser) {
             if (user.getId() == userExist.getId() || StringUtils.equals(user.getUsername(), userExist.getUsername())) {
                 return false;
             }
         }
-
-        userrolerepo.save(Userrole.builder().userid(user.getId()).roleid(role).count(0).build());
         userrepo.save(user);
+        int roleuserid = user.getId() + role;
+        userrolerepo.save(Userrole.builder().userroleid(roleuserid).userid(user.getId()).roleid(role).status(1).build());
+
         return true;
     }
 
     public void delete(int id) {
-        listUser=userrepo.findAll();
+        listUser = userrepo.findAll();
         listUser.removeIf(user -> user.getId() == id);
     }
 
     public User loadUserByUsername(String username) {
-        listUser=userrepo.findAll();
+        listUser = userrepo.findAll();
         for (User user : listUser) {
             if (user.getUsername().equals(username)) {
                 return user;
@@ -70,7 +71,7 @@ public class UserService {
     }
 
     public boolean checkLogin(User user) {
-        listUser=userrepo.findAll();
+        listUser = userrepo.findAll();
         for (User userExist : listUser) {
             if (StringUtils.equals(user.getUsername(), userExist.getUsername())
                     && StringUtils.equals(user.getPassword(), userExist.getPassword())) {
@@ -84,7 +85,7 @@ public class UserService {
 
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 
-            authorities.add(new SimpleGrantedAuthority(rolerepo.getrole(user.getUsername())));
+        authorities.add(new SimpleGrantedAuthority(rolerepo.getRole(user.getUsername())));
 
         return authorities;
     }
